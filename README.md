@@ -1,1 +1,1 @@
-# College-Management-System
+# College-management-system

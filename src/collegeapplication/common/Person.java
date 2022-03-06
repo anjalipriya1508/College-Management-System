@@ -7,7 +7,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Date;
+import java.util.Base64.Encoder;
 
 import javax.imageio.ImageIO;
 
@@ -148,8 +150,8 @@ public abstract class Person extends Cource{
 		
 	}
 	public boolean comparePassword(String password)
-	{
-		return password.equals(this.password)?true:false;
+	{   Encoder encoder = Base64.getEncoder();
+		return encoder.encodeToString(password.getBytes()).equals(this.password)?true:false;
 	}
 	public Image getProfilePic(int width,int height)
 	{

@@ -8,6 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Base64;
+//import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
 
 import javax.swing.JOptionPane;
 
@@ -163,7 +166,13 @@ public class FacultyData
 		int result=0;
 		String query="insert into faculties values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try
-		{
+		{   
+			
+			Encoder encoder = Base64.getEncoder();
+			
+			String originalString = f.getBirthDate();
+        
+            String encodedString = encoder.encodeToString(originalString.getBytes());
 			PreparedStatement pr=con.prepareStatement(query);
 			pr.setInt(1, f.getFacultyId());
 			pr.setString(2,f.getFacultyName());
@@ -182,7 +191,7 @@ public class FacultyData
 			pr.setString(15, "Not Assigned");
 			pr.setInt(16, 0);
 			pr.setString(17, null);
-			pr.setString(18, f.getBirthDate());
+			pr.setString(18, encodedString);
 			pr.setBoolean(19, f.getActiveStatus());
 			pr.setString(20, f.generateJoinedDate());
 			result=pr.executeUpdate();
@@ -426,8 +435,8 @@ public class FacultyData
 				result=false;
 			}
 			else
-			{
-				String query="select count(*) from faculties where facultyid="+facultyid+" and password='"+password+"'";
+			{    Encoder encoder = Base64.getEncoder();
+				String query="select count(*) from faculties where facultyid="+facultyid+" and password='"+ encoder.encodeToString(password.getBytes())+"'";
 				Statement st=con.createStatement();
 				ResultSet rs=st.executeQuery(query);
 				rs.next();
@@ -503,8 +512,9 @@ public class FacultyData
 	public int changePassword(String userid,String password)
 	{
 		try
-		{
-			String query="update faculties set password='"+password+"' where facultyid="+userid;
+		{     Encoder encoder = Base64.getEncoder();
+		//String query="update students set password='"+encoder.encodeToString(password.getBytes())+"' where userid='"+userid+"'";
+			String query="update faculties set password='"+encoder.encodeToString(password.getBytes())+"' where facultyid="+userid;
 			PreparedStatement pr=con.prepareStatement(query);
 			return pr.executeUpdate();
 		}

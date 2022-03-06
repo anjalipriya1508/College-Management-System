@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Base64.Encoder;
+
 import javax.swing.JOptionPane;
 
 import collegeapplication.common.DataBaseConnection;
@@ -29,6 +32,10 @@ public class StudentData
 		String query="insert into students values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try
 		{
+			Encoder encoder = Base64.getEncoder();
+			String originalString = s.getBirthDate();
+	        //String real=originalString;
+	        String encodedString = encoder.encodeToString(originalString.getBytes());
 			
 			PreparedStatement pr=con.prepareStatement(query);
 			pr.setString(1, s.getCourceCode());
@@ -51,7 +58,7 @@ public class StudentData
 			pr.setInt(18, 0);//sr no 
 			pr.setString(19, "");//lastlogin
 			pr.setString(20, s.generateUserId());//userid
-			pr.setString(21, s.getBirthDate());//password
+			pr.setString(21, encodedString);//password
 			pr.setBoolean(22,false);//activestatus
 			pr.setString(23,s.generateAdmissionDate() );
 			 result=pr.executeUpdate();
@@ -975,8 +982,8 @@ public class StudentData
 	{
 		boolean result=false;
 		try
-		{
-			String query="select count(*) from students where userid='"+userid+"' and password='"+password+"'";
+		{   Encoder encoder = Base64.getEncoder();
+			String query="select count(*) from students where userid='"+userid+"' and password='"+encoder.encodeToString(password.getBytes())+"'";
 			Statement st=con.createStatement();
 			ResultSet rs=st.executeQuery(query);
 			rs.next();
@@ -1140,8 +1147,8 @@ public class StudentData
 	public int changePassword(String userid,String password)
 	{
 		try
-		{
-			String query="update students set password='"+password+"' where userid='"+userid+"'";
+		{Encoder encoder = Base64.getEncoder();
+			String query="update students set password='"+encoder.encodeToString(password.getBytes())+"' where userid='"+userid+"'";
 			PreparedStatement pr=con.prepareStatement(query);
 			return pr.executeUpdate();
 		}
@@ -1153,4 +1160,3 @@ public class StudentData
 	}
 	
 }
-
